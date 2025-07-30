@@ -1,0 +1,52 @@
+{
+    "name": "agent-management-client",
+    "version": "1.0.0",
+    "description": "Frontend client for MERN Agent Management System",
+    "private": true,
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.15.0",
+        "react-hook-form": "^7.45.4",
+        "axios": "^1.5.0",
+        "react-dropzone": "^14.2.3"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^4.0.3",
+        "vite": "^4.4.5",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/jest-dom": "^5.17.0",
+        "@testing-library/user-event": "^14.4.3",
+        "vitest": "^0.34.3",
+        "jsdom": "^22.1.0"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "build:prod": "NODE_ENV=production vite build",
+        "preview": "vite preview",
+        "serve": "vite preview --port 3000",
+        "test": "vitest --run",
+        "test:watch": "vitest",
+        "test:coverage": "vitest --run --config=vitest.coverage.config.js",
+        "test:unit": "vitest --run src/**/*.test.{js,jsx}",
+        "test:component": "vitest --run src/components/**/*.test.{js,jsx}",
+        "test:utils": "vitest --run src/utils/**/*.test.{js,jsx}",
+        "lint": "echo 'Linting not configured yet'",
+        "lint:fix": "echo 'Linting not configured yet'",
+        "clean": "rm -rf dist coverage",
+        "setup": "npm install"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

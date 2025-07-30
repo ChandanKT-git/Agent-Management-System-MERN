@@ -1,0 +1,223 @@
+name: Comprehensive Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+        mongodb-version: ['6.0']
+
+    services:
+      mongodb:
+        image: mongo:${{ matrix.mongodb-version }}
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install server dependencies
+      run: |
+        cd server
+        npm ci
+
+    - name: Install client dependencies
+      run: |
+        cd client
+        npm ci
+
+    - name: Create test environment files
+      run: |
+        cd server
+        cp .env.example .env.test
+        echo "NODE_ENV=test" >> .env.test
+        echo "MONGODB_TEST_URI=mongodb://root:password@localhost:27017/test?authSource=admin" >> .env.test
+        echo "JWT_SECRET=test-jwt-secret-key-for-ci" >> .env.test
+        echo "JWT_EXPIRES_IN=1h" >> .env.test
+
+    - name: Wait for MongoDB
+      run: |
+        until mongo --host localhost:27017 --username root --password password --eval "print('MongoDB is ready')" --authenticationDatabase admin; do
+          echo "Waiting for MongoDB..."
+          sleep 2
+        done
+
+    - name: Run server unit tests
+      run: |
+        cd server
+        npm run test:unit
+      env:
+        NODE_ENV: test
+        MONGODB_TEST_URI: mongodb://root:password@localhost:27017/test?authSource=admin
+        JWT_SECRET: test-jwt-secret-key-for-ci
+        JWT_EXPIRES_IN: 1h
+
+    - name: Run server integration tests
+      run: |
+        cd server
+        npm run test:integration
+      env:
+        NODE_ENV: test
+        MONGODB_TEST_URI: mongodb://root:password@localhost:27017/test?authSource=admin
+        JWT_SECRET: test-jwt-secret-key-for-ci
+        JWT_EXPIRES_IN: 1h
+
+    - name: Run server e2e tests
+      run: |
+        cd server
+        npm run test:e2e
+      env:
+        NODE_ENV: test
+        MONGODB_TEST_URI: mongodb://root:password@localhost:27017/test?authSource=admin
+        JWT_SECRET: test-jwt-secret-key-for-ci
+        JWT_EXPIRES_IN: 1h
+
+    - name: Run client tests
+      run: |
+        cd client
+        npm run test:coverage
+
+    - name: Run comprehensive test suite with coverage
+      run: |
+        chmod +x scripts/run-tests.js
+        node scripts/run-tests.js
+      env:
+        NODE_ENV: test
+        MONGODB_TEST_URI: mongodb://root:password@localhost:27017/test?authSource=admin
+        JWT_SECRET: test-jwt-secret-key-for-ci
+        JWT_EXPIRES_IN: 1h
+
+    - name: Upload server coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./server/coverage/lcov.info
+        flags: server
+        name: server-coverage
+        fail_ci_if_error: false
+
+    - name: Upload client coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./client/coverage/lcov.info
+        flags: client
+        name: client-coverage
+        fail_ci_if_error: false
+
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "### Server Tests" >> $GITHUB_STEP_SUMMARY
+        if [ -f server/coverage/coverage-summary.json ]; then
+          echo "Server coverage report generated successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "Server coverage report not found" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "### Client Tests" >> $GITHUB_STEP_SUMMARY
+        if [ -f client/coverage/coverage-summary.json ]; then
+          echo "Client coverage report generated successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "Client coverage report not found" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Archive test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.node-version }}
+        path: |
+          server/coverage/
+          client/coverage/
+          server/logs/
+        retention-days: 30
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run security audit on server
+      run: |
+        cd server
+        npm audit --audit-level moderate
+
+    - name: Run security audit on client
+      run: |
+        cd client
+        npm audit --audit-level moderate
+
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+      continue-on-error: true
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    - name: Install dependencies
+      run: |
+        cd server
+        npm ci
+
+    - name: Run performance tests
+      run: |
+        cd server
+        # Add performance test command here when available
+        echo "Performance tests would run here"
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan]
+    if: always()
+    
+    steps:
+    - name: Notify on success
+      if: needs.test.result == 'success' && needs.security-scan.result == 'success'
+      run: |
+        echo "All tests passed successfully! 🎉"
+        
+    - name: Notify on failure
+      if: needs.test.result == 'failure' || needs.security-scan.result == 'failure'
+      run: |
+        echo "Some tests failed. Please check the logs. ❌"
+        exit 1

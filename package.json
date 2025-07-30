@@ -1,0 +1,45 @@
+{
+    "name": "mern-agent-management",
+    "version": "1.0.0",
+    "description": "MERN stack application for agent management and task distribution",
+    "main": "server/server.js",
+    "scripts": {
+        "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+        "server:dev": "cd server && npm run dev",
+        "client:dev": "cd client && npm run dev",
+        "server:start": "cd server && npm start",
+        "client:build": "cd client && npm run build",
+        "build": "npm run client:build",
+        "build:prod": "NODE_ENV=production npm run build",
+        "start": "NODE_ENV=production npm run server:start",
+        "install:server": "cd server && npm install",
+        "install:client": "cd client && npm install",
+        "install:all": "npm run install:server && npm run install:client",
+        "setup": "npm run install:all && npm run build",
+        "setup:prod": "NODE_ENV=production npm run setup",
+        "test": "npm run test:server && npm run test:client",
+        "test:server": "cd server && npm test",
+        "test:client": "cd client && npm run test",
+        "test:coverage": "npm run test:server -- --coverage && npm run test:client -- --coverage",
+        "clean": "rimraf client/dist server/logs server/uploads",
+        "clean:deps": "rimraf node_modules client/node_modules server/node_modules",
+        "start:dev": "node scripts/start-dev.bat",
+        "start:prod": "node scripts/start-prod.bat",
+        "reset": "npm run clean && npm run clean:deps && npm run install:all",
+        "lint": "cd server && npm run lint && cd ../client && npm run lint",
+        "lint:fix": "cd server && npm run lint:fix && cd ../client && npm run lint:fix"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.0",
+        "rimraf": "^5.0.0"
+    },
+    "keywords": [
+        "mern",
+        "react",
+        "express",
+        "mongodb",
+        "agent-management"
+    ],
+    "author": "",
+    "license": "MIT"
+}

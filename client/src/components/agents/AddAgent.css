@@ -1,0 +1,100 @@
+/* Password strength indicator styles */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.strength-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-0 .strength-fill {
+    background-color: #f44336;
+}
+
+.strength-1 .strength-fill {
+    background-color: #ff9800;
+}
+
+.strength-2 .strength-fill {
+    background-color: #ff9800;
+}
+
+.strength-3 .strength-fill {
+    background-color: #2196f3;
+}
+
+.strength-4 .strength-fill {
+    background-color: #4caf50;
+}
+
+.strength-5 .strength-fill {
+    background-color: #4caf50;
+}
+
+.strength-text {
+    font-size: 12px;
+    color: #666;
+}
+
+.strength-0 .strength-text {
+    color: #f44336;
+}
+
+.strength-1 .strength-text {
+    color: #ff9800;
+}
+
+.strength-2 .strength-text {
+    color: #ff9800;
+}
+
+.strength-3 .strength-text {
+    color: #2196f3;
+}
+
+.strength-4 .strength-text {
+    color: #4caf50;
+}
+
+.strength-5 .strength-text {
+    color: #4caf50;
+}
+
+/* Form security enhancements */
+.form-group input.error {
+    border-color: #f44336;
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+}
+
+.error-text {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Security notice */
+.security-notice {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #1976d2;
+}
+
+.security-notice .icon {
+    margin-right: 8px;
+}

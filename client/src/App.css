@@ -1,0 +1,188 @@
+/* App-specific styles */
+.App {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation styles */
+.nav-link {
+    display: inline-block;
+    padding: var(--spacing-3) var(--spacing-4);
+    margin: var(--spacing-2);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Dashboard styles */
+.dashboard-container {
+    padding: var(--spacing-8);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-6);
+}
+
+/* Login styles */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-color);
+}
+
+.login-form {
+    background-color: var(--surface-color);
+    padding: var(--spacing-8);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Component containers */
+.agent-management-container,
+.file-upload-container,
+.distribution-view-container {
+    padding: var(--spacing-8);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-spinner.large .spinner {
+    width: 40px;
+    height: 40px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error boundary */
+.error-boundary {
+    padding: var(--spacing-8);
+    text-align: center;
+    background-color: var(--surface-color);
+    border: 1px solid var(--error-color);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-4);
+}
+
+.error-boundary h2 {
+    color: var(--error-color);
+    margin-bottom: var(--spacing-4);
+}
+
+/* Notification toast */
+.notification-toast {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    z-index: 1000;
+}
+
+.notification-toast.info {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.notification-toast.success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.notification-toast.warning {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.notification-toast.error {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    padding: 0;
+    margin-left: var(--spacing-4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-nav {
+        flex-direction: column;
+    }
+
+    .nav-link {
+        text-align: center;
+    }
+
+    .login-form {
+        margin: var(--spacing-4);
+        padding: var(--spacing-6);
+    }
+
+    .dashboard-container,
+    .agent-management-container,
+    .file-upload-container,
+    .distribution-view-container {
+        padding: var(--spacing-4);
+    }
+
+    .notification-toast {
+        right: var(--spacing-2);
+        left: var(--spacing-2);
+        min-width: auto;
+    }
+}
